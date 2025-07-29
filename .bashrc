@@ -18,8 +18,8 @@ pdym7=$(date "+%Y%m%d" -d "$pdy - 7 day")
 
 alias editspalog="/lfs/h1/ops/prod/logs/editspalog"
 alias viewspalog="view /lfs/h1/ops/prod/logs/spalog"
-
-alias wcossnotes="vi /lfs/h1/nco/idsb/noscrub/$localnoscrub/notes/wcoss2.txt"
+alias ecflowincludes="echo /apps/ops/prod/nco/core/ecflow.v5.6.0.14/include/"
+alias wcoss2notes="vi /lfs/h1/nco/idsb/noscrub/$localnoscrub/notes/wcoss2.txt"
 
 alias gd="pushd"
 alias pd="popd"
