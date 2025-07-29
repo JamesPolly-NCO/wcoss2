@@ -20,6 +20,7 @@ alias editspalog="/lfs/h1/ops/prod/logs/editspalog"
 alias viewspalog="view /lfs/h1/ops/prod/logs/spalog"
 alias ecflowincludes="echo /apps/ops/prod/nco/core/ecflow.v5.6.0.14/include/"
 alias wcoss2notes="vi /lfs/h1/nco/idsb/noscrub/$localnoscrub/notes/wcoss2.txt"
+alias dbnet_siphonlog="echo /lfs/h1/ops/prod/dbnet_siphon/log/dbnet.log.$pdy"
 
 alias gd="pushd"
 alias pd="popd"

@@ -5,7 +5,7 @@ if (($# != 1)); then
         exit
 fi
 
-outfile="downstream_jobs"
+outfile="downstream_jobs.txt"
 rm $outfile
 
 modelname=$1
