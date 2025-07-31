@@ -1,4 +1,10 @@
 #!/bin/bash
+# deps_from_pkgfiles.sh: creates a list of ecf files that reference an upstream package
+# James Polly 20250731
+#
+# usage:
+# ./deps_from_pkgfiles.sh rtofs
+
 if (($# != 1)); then
         echo "usage: $0 pkg_name"
 	echo "e.g.: $0 rtofs"
