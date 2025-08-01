@@ -11,6 +11,7 @@
 # test cases:
 # /prod/primary/12/hmon/v3.2/hmon2/jhmon_relocate
 # /prod/primary/12/stofs/v2.1/3d_atl/jstofs_3d_atl_prep
+# /para/primary/06/gfs/v16.3/gfs/wave/prep/jgfs_wave_prep: needs to handle #PBS -N %RUN%_wave_prep_%CYC%
 
 source funcs.sh
 
@@ -32,17 +33,18 @@ echo ""
 
 jecf_task_name=$(echo $ecf_path | rev | cut -d'/' -f1 | rev)
 ecf_node_name=$(echo $jecf_task_name | cut -c2-)
-ecf_node_pattern=$(echo $ecf_node_name | sed "s/_/.*/g")
+ecf_node_pattern=$(echo $ecf_node_name | sed "s/$model//" | sed "s/_/.*/g")
 
 echo "Matching .ecf files containing PBS directives matching: $ecf_node_pattern"
 echo 'grep -i "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf")'
 echo "..."
 grep -i "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf")
 echo "" && echo "Check for output files based on these PBS job names:"
+grep -hi "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf") | sort uniq
 
 #grep -h "PBS .*-N .*$ecf_node_name" $(find "$pkgdir"/ecf -name "*.ecf") | sed "s/%CYC%/$ecf_cyc/g" | cut -d' ' -f3
-for tmppbsvar in $(grep -h "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf") | cut -d' ' -f3); do
-	tmppbsname=$(echo "$tmppbsvar" | sed "s/%[a-zA-Z][a-zA-Z]*%/*/g" | sed "s/_/*/g")
+for tmppbsvar in $(grep -hi "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf") | sort | uniq | cut -d' ' -f3); do
+	tmppbsname=$(echo "$tmppbsvar" | sed "s/%[a-zA-Z][a-zA-Z]*%/*/g" | sed "s/_/*/g" | sed "s/^/$model*/")
 	echo "searching for: $tmppbsname"
 	echo 'ls -l /lfs/h1/ops/prod/output/$PDY/$tmppbsname.o*'
 	[ $(ls /lfs/h1/ops/prod/output/$PDY/$tmppbsname.o* 2>/dev/null | wc -w) = 0 ] \
