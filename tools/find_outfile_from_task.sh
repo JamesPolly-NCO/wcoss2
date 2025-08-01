@@ -3,26 +3,31 @@
 # James Polly 20250731
 #
 # usage:
-# ./find_outfile_from_task.sh /prod/primary/12/stofs/v2.1/3d_atl/jstofs_3d_atl_prep
+# ./find_outfile_from_task.sh /prod/primary/12/stofs/v2.1/3d_atl/jstofs_3d_atl_prep decflow01 31415
 #
 # or to find an older output file provide YYYYYMMDD as arg:
-# ./find_outfile_from_task.sh /prod/primary/12/stofs/v2.1/3d_atl/jstofs_3d_atl_prep 20250728
+# ./find_outfile_from_task.sh /prod/primary/12/stofs/v2.1/3d_atl/jstofs_3d_atl_prep decflow01 31415 20250728
 #
 # test cases:
 # /prod/primary/12/hmon/v3.2/hmon2/jhmon_relocate
 # /prod/primary/12/stofs/v2.1/3d_atl/jstofs_3d_atl_prep
-# /para/primary/06/gfs/v16.3/gfs/wave/prep/jgfs_wave_prep: needs to handle #PBS -N %RUN%_wave_prep_%CYC%
+# /para/primary/06/gfs/v16.3/gfs/wave/prep/jgfs_wave_prep
+# /prod/primary/18/obsproc/v1.2/nam/18z/tm00/dump/jobsproc_nam_dump_alert
 
+module load ecflow
 source $HOME/tools/funcs.sh
 
 ecf_path=$1
+ecf_host=$2
+ecf_port=$3
+
 model=$(echo $ecf_path | cut -d'/' -f5)
 echo "Looking for package: "$model""
 ecf_cyc=$(echo $ecf_path | cut -d'/' -f4)
 echo "Looking for cycle: "$ecf_cyc""
 echo "Looking for ecFlow task: "$ecf_path""
 
-PDY=${2-$(date "+%Y%m%d")}
+PDY=${4-$(date "+%Y%m%d")}
 
 ver_latest=$(get_latest_pkg_ver $model)
 
@@ -31,26 +36,13 @@ echo "Found latest version: "$ver_latest""
 echo "Location: "$pkgdir""
 echo ""
 
-jecf_task_name=$(echo $ecf_path | rev | cut -d'/' -f1 | rev)
-ecf_node_name=$(echo $jecf_task_name | cut -c2-)
-ecf_node_pattern=$(echo $ecf_node_name | sed "s/$model//" | sed "s/_/.*/g")
+ecf_file_name=$(ecflow_client --host=$ecf_host --port=$ecf_port --query=variable $1:ECF_SCRIPT | rev | cut -d'/' -f1 | rev)
+ecf_file_path=$(find "$pkgdir"/ecf -name "$ecf_file_name")
+pbs_pattern=$(grep -hi 'PBS .*-N .*' $ecf_file_path | cut -d' ' -f3 | sed "s/%[a-zA-Z][a-zA-Z]*%/*/g" | sed "s/_/*/g")
 
-echo "Matching .ecf files containing PBS directives matching: $ecf_node_pattern"
-echo 'grep -i "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf")'
+echo "searching for: $pbs_pattern"
+echo 'ls -l /lfs/h1/ops/prod/output/$PDY/$pbs_pattern.o*'
+[ $(ls /lfs/h1/ops/prod/output/$PDY/$pbs_pattern.o* 2>/dev/null | wc -w) = 0 ] \
+	&& echo "...no output files found" && exit
 echo "..."
-grep -i "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf")
-echo "" && echo "Check for output files based on these PBS job names:"
-grep -hi "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf") | sort uniq
-
-#grep -h "PBS .*-N .*$ecf_node_name" $(find "$pkgdir"/ecf -name "*.ecf") | sed "s/%CYC%/$ecf_cyc/g" | cut -d' ' -f3
-for tmppbsvar in $(grep -hi "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf") | sort | uniq | cut -d' ' -f3); do
-	tmppbsname=$(echo "$tmppbsvar" | sed "s/%[a-zA-Z][a-zA-Z]*%/*/g" | sed "s/_/*/g")
-	[[ $tmppbsname == *"$model"* ]] || tmppbsname=$(echo $tmppbsname | sed "s/^/$model*/")
-	echo "searching for: $tmppbsname"
-	echo 'ls -l /lfs/h1/ops/prod/output/$PDY/$tmppbsname.o*'
-	[ $(ls /lfs/h1/ops/prod/output/$PDY/$tmppbsname.o* 2>/dev/null | wc -w) = 0 ] \
-		&& echo "...no output files found" && echo "" && continue
-	echo "..."
-	ls -l /lfs/h1/ops/prod/output/$PDY/$tmppbsname.o*
-	echo ""
-done
+ls -l /lfs/h1/ops/prod/output/$PDY/$pbs_pattern.o*
