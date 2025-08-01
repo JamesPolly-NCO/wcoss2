@@ -11,7 +11,7 @@ function get_latest_pkg_ver {
         local vdii=0
         local vdiii=0
 	local tmpver
-        for tmpver in $(find /lfs/h1/ops/prod/packages -maxdepth 1 -name "$model".* -type d | cut -d'.' -f2-4 | cut -c2-); do
+        for tmpver in $(find "/lfs/h1/ops/prod/packages" -maxdepth 1 -name "$model.*" -type d | cut -d'.' -f2-4 | cut -c2-); do
         	local tmpvernum=$(echo $tmpver | sed -e "s/_//g" -e "s/[a-zA-Z][a-zA-Z]*//g")
         	local tmpvdi=$(echo $tmpvernum | cut -d'.' -f1)
         	local tmpvdii=$(echo $tmpvernum | cut -d'.' -f2)

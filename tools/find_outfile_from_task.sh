@@ -13,7 +13,7 @@
 # /prod/primary/12/stofs/v2.1/3d_atl/jstofs_3d_atl_prep
 # /para/primary/06/gfs/v16.3/gfs/wave/prep/jgfs_wave_prep: needs to handle #PBS -N %RUN%_wave_prep_%CYC%
 
-source funcs.sh
+source $HOME/tools/funcs.sh
 
 ecf_path=$1
 model=$(echo $ecf_path | cut -d'/' -f5)
@@ -44,7 +44,8 @@ grep -hi "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf") | so
 
 #grep -h "PBS .*-N .*$ecf_node_name" $(find "$pkgdir"/ecf -name "*.ecf") | sed "s/%CYC%/$ecf_cyc/g" | cut -d' ' -f3
 for tmppbsvar in $(grep -hi "PBS .*-N .*$ecf_node_pattern" $(find "$pkgdir"/ecf -name "*.ecf") | sort | uniq | cut -d' ' -f3); do
-	tmppbsname=$(echo "$tmppbsvar" | sed "s/%[a-zA-Z][a-zA-Z]*%/*/g" | sed "s/_/*/g" | sed "s/^/$model*/")
+	tmppbsname=$(echo "$tmppbsvar" | sed "s/%[a-zA-Z][a-zA-Z]*%/*/g" | sed "s/_/*/g")
+	[[ $tmppbsname == *"$model"* ]] || tmppbsname=$(echo $tmppbsname | sed "s/^/$model*/")
 	echo "searching for: $tmppbsname"
 	echo 'ls -l /lfs/h1/ops/prod/output/$PDY/$tmppbsname.o*'
 	[ $(ls /lfs/h1/ops/prod/output/$PDY/$tmppbsname.o* 2>/dev/null | wc -w) = 0 ] \
