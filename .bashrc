@@ -77,6 +77,15 @@ qcd () {
 		pararuntime)
 			pushd /lfs/h1/ops/para/com/logs/runtime/para/daily
 			;;
+		rrfshome)
+			pushd /lfs/h2/emc/lam/noscrub/emc.lam/rrfs/para/packages/rrfs.v1.0.0
+			;;
+		rrfscom)
+			pushd /lfs/h3/emc/lam/noscrub/ecflow/ptmp/emc.lam/ecflow_rrfs/para/com/rrfs/v1.0
+			;;
+		rrfsjoblog)
+			pushd /lfs/h3/emc/lam/noscrub/ecflow/ptmp/emc.lam/ecflow_rrfs/para/output/prod/today
+			;;
 		*)
 			#supplied arg not supported
 			echo "qcd: unknown key '$1'"
@@ -84,7 +93,7 @@ qcd () {
 			;;
 	esac
 }
-complete -W "noscrub longrun prodoutput paraoutput testoutput prodcom paracom testcom prodpackage parapackage testpackage prodruntime pararuntime" qcd
+complete -W "noscrub longrun prodoutput paraoutput testoutput prodcom paracom testcom prodpackage parapackage testpackage prodruntime pararuntime rrfscom rrfshome rrfsjoblog" qcd
 
 lsrunt () {
           # Get info from:
@@ -118,17 +127,27 @@ lsrunt () {
 
 lmodload () {
 	case "$1" in
+		depsdotpy)
+			module unload python
+			module use /apps/ops/para/nco/modulefiles/core
+			module load prod_util intel python/3.8.6 deps
+			;;
 		python)
 			module unload python
 			module load intel/19.1.3.304
 			module load python/3.12.0
+			;;
+		wgrib)
+			module load intel/19.1.3.304
+			module load libjpeg
+			module load grib_util
 			;;
 		wgrib2)
 			module load intel/19.1.3.304
 			module load wgrib2
 			;;
 		help)
-			echo "usage: lmodload <APPNAME>"
+			echo "usage: lmodload <ARGNAME>"
 			echo "e.g.: lmodload python"
 			return 0
 			;;
