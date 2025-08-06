@@ -14,6 +14,13 @@
 # /para/primary/06/gfs/v16.3/gfs/wave/prep/jgfs_wave_prep
 # /prod/primary/18/obsproc/v1.2/nam/18z/tm00/dump/jobsproc_nam_dump_alert
 
+if (($# != 3 )); then
+	echo "Error: accepts three arguments: path host port"
+	echo "usage:"
+	echo "     find_outfile_from_task.sh /path/to/node decflow0? 31415"
+	exit
+fi
+
 module load ecflow
 source $HOME/tools/funcs.sh
 
