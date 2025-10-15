@@ -1,5 +1,10 @@
 set -o vi
 
+PS1="\[$(ppwd)\]\u@\h:\W> "
+
+# eval needed because dircolors only prints commands to stdout
+eval $(dircolors -b ~/.dircolors)
+
 module use /apps/ops/para/nco/modulefiles/core
 
 localnoscrub=$(ls -l /lfs/h1/nco/idsb/noscrub \
@@ -156,6 +161,12 @@ lmodload () {
 			return 1
 			;;
 	esac
+}
+
+sudopara () {
+    echo "switching to ops.para; source shell settings file:"
+    echo "source /lfs/h1/nco/idsb/noscrub/james.polly/scripts/set_shell.sh"
+    sudo -iu ops.para
 }
 
 # TODO: add completion functionality for programs e.g.

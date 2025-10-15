@@ -1,0 +1,2 @@
+log=${1:-${ecflog:?}}
+grep -a  -- -- ${log} | egrep -v "\] --(sync|news|stats|-------|server_version)|--alter change label|fob|ops\.(para|prod)@|PROGRESS:|Sev.*--(H|h)ost"
