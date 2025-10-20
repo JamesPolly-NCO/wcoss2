@@ -8,9 +8,8 @@ eval $(dircolors -b ~/.dircolors)
 module use /apps/ops/para/nco/modulefiles/core
 
 localnoscrub=$(ls -l /lfs/h1/nco/idsb/noscrub \
-	| grep -i 'james.polly' \
-	| grep 'james.polly ..*idsb' \
-	| cut -d' ' -f15)
+	| grep -i 'james.polly ..*idsb' \
+	| rev | cut -d' ' -f1 | rev)
 
 pdy=$(date "+%Y%m%d")
 pdym1=$(date "+%Y%m%d" -d "$pdy - 1 day")
