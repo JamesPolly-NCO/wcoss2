@@ -1,0 +1,1 @@
+ for node in $(eval echo $(eval echo $(grep -a "^Job.*nodelist" ${1:?"need output file as arg"} | cut -f2- -d: | sed -re "s/([0-9]*)-([0-9]*)/{\1..\2}/g" |tr [] {} ))); do echo $node | sed -re "s/\{([0-9]+)\}/\1/"; done

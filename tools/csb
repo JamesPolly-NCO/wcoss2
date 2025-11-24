@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#read -p "Press "s" to skip, "b" to break, or any other key to continue.. " -n1 -s csq
+read -p "Press any to continue.. " -n1 -s csq
+case $csq in
+ s) echo "skipping"; continue;;
+ b) echo "breaking"; break;;
+ *);;
+esac
+
