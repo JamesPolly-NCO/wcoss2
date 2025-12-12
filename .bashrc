@@ -22,7 +22,9 @@ pdym7=$(date "+%Y%m%d" -d "$pdy - 7 day")
 
 alias editspalog="/lfs/h1/ops/prod/logs/editspalog"
 alias viewspalog="view /lfs/h1/ops/prod/logs/spalog"
+
 alias ecflowincludes="echo /apps/ops/prod/nco/core/ecflow.v5.6.0.14/include/"
+alias dailynotes="vi /lfs/h1/nco/idsb/noscrub/$localnoscrub/notes/daily/current.txt"
 alias wcoss2notes="vi /lfs/h1/nco/idsb/noscrub/$localnoscrub/notes/wcoss2.txt"
 alias dbnet_siphonlog="echo /lfs/h1/ops/prod/dbnet_siphon/log/dbnet.log.$pdy"
 
@@ -90,6 +92,9 @@ qcd () {
 		rrfsjoblog)
 			pushd /lfs/h3/emc/lam/noscrub/ecflow/ptmp/emc.lam/ecflow_rrfs/para/output/prod/today
 			;;
+                ecflowlog)
+                        pushd /lfs/h1/ops/para/output/ecflow/
+                        ;;
 		*)
 			#supplied arg not supported
 			echo "qcd: unknown key '$1'"
@@ -97,7 +102,7 @@ qcd () {
 			;;
 	esac
 }
-complete -W "noscrub longrun prodoutput paraoutput testoutput prodcom paracom testcom prodpackage parapackage testpackage prodruntime pararuntime rrfscom rrfshome rrfsjoblog" qcd
+complete -W "noscrub longrun prodoutput paraoutput testoutput prodcom paracom testcom prodpackage parapackage testpackage prodruntime pararuntime rrfscom rrfshome rrfsjoblog ecflowlog" qcd
 
 lsrunt () {
           # Get info from:
@@ -162,7 +167,14 @@ lmodload () {
 	esac
 }
 
+sudoprod () {
+    pwd
+    echo "switching to ops.prod; source shell settings file:"
+    echo "source /lfs/h1/nco/idsb/noscrub/james.polly/scripts/set_shell.sh"
+    sudo -iu ops.prod
+}
 sudopara () {
+    pwd
     echo "switching to ops.para; source shell settings file:"
     echo "source /lfs/h1/nco/idsb/noscrub/james.polly/scripts/set_shell.sh"
     sudo -iu ops.para
