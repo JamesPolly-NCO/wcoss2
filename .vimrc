@@ -4,3 +4,5 @@ colorscheme industry
 
 set incsearch
 set hlsearch
+
+packadd! matchit

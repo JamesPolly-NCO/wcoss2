@@ -4,6 +4,13 @@
 #
 # To be executed from root of "wcoss2" repo.
 
+if [[ "/u/james.polly/repos/wcoss2" != "$(pwd)" ]]; then
+    echo "Execute from root of "wcoss2" repo; exiting." 
+    echo "From root of repo, try: ./repo_tools/populate_homedir.sh"
+    exit 0
+fi
+
+
 filelist=./repo_tools/rsync_files_from.tmp
 [ -a "$filelist" ] && rm $filelist
 
