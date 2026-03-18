@@ -1,9 +1,16 @@
 #!/bin/bash
 # Identify DCOM files used in job run logs
 
-cyc="00"
-pdy="20260317"
-model="rrfs"
+
+if (($# != 3)); then
+    echo "Usage: $0 model pdy cyc"
+    echo "e.g. $0 rrfs 20260318 00"
+    exit
+fi
+model=$1
+pdy=$2
+cyc=$3
+
 loglist="${model}_${pdy}_dcom_loglist"
 outfile="${model}_${pdy}_dcom_files"
 
