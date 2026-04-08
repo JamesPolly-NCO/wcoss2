@@ -16,24 +16,29 @@ outfile=cmp_list
 find $dir1 -type f > first_run
 find $dir2 -type f > second_run
 
-nfirst=$(wc -l first_run)
-nsecond=$(wc -l second_run)
+nfirst=$(wc -l < first_run)
+nsecond=$(wc -l < second_run)
 
-[[ "$nfirst" != "$nsecond" ]] && echo "Warning, different number of files"
+echo $nfirst
+echo $nsecond
+
+[[ "$nfirst" -ne "$nsecond" ]] && echo "Warning, different number of files"
 
 if (( nfirst >= nsecond )); then
-    shortdir=$dir2
+    shortlist=second_run
+    echo "using $dir2 contents for comparision"
 else
-    shortdir=$dir1
-endif
+    shortlist=first_run
+    echo "using $dir1 contents for comparision"
+fi
 
 while read line; do
-    if [[ "$shortdir" == "$dir1" ]]; then
+    if [[ "$shortlist" == "first_run" ]]; then
        tmpf=$(echo $line | sed "s|$dir1|$dir2|")
-    elif [[ "$shortdir" == "$dir2" ]]; then
+    elif [[ "$shortlist" == "second_run" ]]; then
        tmpf=$(echo $line | sed "s|$dir2|$dir1|")
     fi
     echo "cmp ${line} ${tmpf}" >> $outfile
-done < $shortdir
+done < $shortlist
 
 chmod +x $outfile
