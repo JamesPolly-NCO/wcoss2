@@ -13,8 +13,8 @@ outfile=cmp_list
 
 [[ -e $outfile ]] && rm -rf $outfile
 
-find $dir1 -type f > first_run
-find $dir2 -type f > second_run
+find $dir1 -type f -path "*dbnlogs" -prune -o -print > first_run
+find $dir2 -type f -path "*dbnlogs" -prune -o -print > second_run
 
 nfirst=$(wc -l < first_run)
 nsecond=$(wc -l < second_run)
