@@ -41,6 +41,9 @@ qcd () {
 	# accept 1 argument that is a string key, and perform a different
 	# "pushd" operation for each key
 	case "$1" in
+                ecflowlog)
+                        pushd /lfs/h1/ops/para/output/ecflow/
+                        ;;
 		ptmp)
 			pushd /lfs/h1/nco/ptmp/james.polly/
 			;;
@@ -83,18 +86,18 @@ qcd () {
 		pararuntime)
 			pushd /lfs/h1/ops/para/com/logs/runtime/para/daily
 			;;
-		rrfshome)
-			pushd /lfs/h2/emc/lam/noscrub/emc.lam/rrfs/para/packages/rrfs.v1.0.0
+		testrrfshome)
+			pushd /lfs/h1/ops/test/packages/rrfs.v1.0.10
 			;;
-		rrfscom)
-			pushd /lfs/h3/emc/lam/noscrub/ecflow/ptmp/emc.lam/ecflow_rrfs/para/com/rrfs/v1.0
+		pararrfshome)
+			pushd /lfs/h1/ops/para/packages/rrfs.v1.0.12
 			;;
-		rrfsjoblog)
-			pushd /lfs/h3/emc/lam/noscrub/ecflow/ptmp/emc.lam/ecflow_rrfs/para/output/prod/today
+		pararrfscom)
+			pushd /lfs/h1/ops/para/com/v1.0
 			;;
-                ecflowlog)
-                        pushd /lfs/h1/ops/para/output/ecflow/
-                        ;;
+		noscrubrrfs)
+                        pushd /lfs/h1/nco/idsb/noscrub/james.polly/work/rrfs_202508
+			;;
 		*)
 			#supplied arg not supported
 			echo "qcd: unknown key '$1'"
