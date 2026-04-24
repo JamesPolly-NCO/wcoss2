@@ -86,6 +86,9 @@ qcd () {
 		pararuntime)
 			pushd /lfs/h1/ops/para/com/logs/runtime/para/daily
 			;;
+		testrrfscom)
+			pushd /lfs/h1/ops/test/com/v1.0
+			;;
 		testrrfshome)
 			pushd /lfs/h1/ops/test/packages/rrfs.v1.0.10
 			;;
@@ -105,7 +108,7 @@ qcd () {
 			;;
 	esac
 }
-complete -W "noscrub longrun prodoutput paraoutput testoutput prodcom paracom testcom prodpackage parapackage testpackage prodruntime pararuntime rrfscom rrfshome rrfsjoblog ecflowlog" qcd
+complete -W "ecflowlog noscrub longrun prodoutput paraoutput testoutput prodcom paracom testcom prodpackage parapackage testpackage prodruntime pararuntime testrrfscom testrrfshome pararrfshome pararrfscom noscrubrrfs" qcd
 
 lsrunt () {
           # Get info from:
