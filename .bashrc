@@ -87,7 +87,7 @@ qcd () {
 			pushd /lfs/h1/ops/para/com/logs/runtime/para/daily
 			;;
 		testrrfscom)
-			pushd /lfs/h1/ops/test/com/v1.0
+			pushd /lfs/h1/ops/test/com/rrfs/v1.0
 			;;
 		testrrfshome)
 			pushd /lfs/h1/ops/test/packages/rrfs.v1.0.10
@@ -96,7 +96,7 @@ qcd () {
 			pushd /lfs/h1/ops/para/packages/rrfs.v1.0.12
 			;;
 		pararrfscom)
-			pushd /lfs/h1/ops/para/com/v1.0
+			pushd /lfs/h1/ops/para/com/rrfs/v1.0
 			;;
 		noscrubrrfs)
                         pushd /lfs/h1/nco/idsb/noscrub/james.polly/work/rrfs_202508
