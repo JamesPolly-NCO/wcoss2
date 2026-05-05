@@ -3,7 +3,7 @@
 # make a list of files to compare matching patterns
 # uses output from run_cmp_list.sh
 
-if (($# <= 2)); then
+if (($# < 2)); then
     echo "Specify two directories and an optional pattern to match."
     echo "Usage: $0 dir1 dir2 [\$pattern]"
     echo "e.g. $0 /path/to/run1 /path/to/run2"
@@ -40,10 +40,10 @@ echo $nsecond
 
 if (( nfirst >= nsecond )); then
     shortlist=$second_tmp
-    echo "using $dir2 contents for comparision"
+    echo "using $dir2 contents to build pairs"
 else
     shortlist=$first_tmp
-    echo "using $dir1 contents for comparision"
+    echo "using $dir1 contents to build pairs"
 fi
 
 while read line; do
