@@ -45,7 +45,7 @@ donefile=${fprefix}.done
 while IFS= read -r line; do
     firstfile=$(echo $line | cut -d' ' -f1)
     secondfile=$(echo $line | cut -d' ' -f2)
-    if [[ $firstfile != $pattern ]]; then
+    if [[ -n $3 && $firstfile != $pattern ]]; then
        continue
     else
         donecnt=$(( $(grep -c ${firstfile}$ $donefile) + $(grep -c ${secondfile}$ $donefile)))
