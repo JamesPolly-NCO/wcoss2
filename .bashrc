@@ -99,7 +99,7 @@ qcd () {
 			pushd /lfs/h1/ops/para/com/rrfs/v1.0
 			;;
 		noscrubrrfs)
-                        pushd /lfs/h1/nco/idsb/noscrub/james.polly/work/rrfs_202508
+                        pushd /lfs/h1/nco/idsb/noscrub/$localnoscrub/work/rrfs_202508
 			;;
 		*)
 			#supplied arg not supported
