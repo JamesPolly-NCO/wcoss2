@@ -10,21 +10,28 @@ fi
 model=$1
 pdy=$2
 cyc=$3
+cdate="${model}_${pdy}_${cyc}"
 
-loglist="${model}_${pdy}_dcom_loglist"
-outfile="${model}_${pdy}_dcom_files"
+loglist="${cdate}_dcom_loglist"
+outfile="${cdate}_dcom_files"
 
-echo "Identifying used DCOM files for:"
-echo "$model $pdy"
+echo "Identifying jobs of:"
+echo "$cdate"
+echo "that use data from:"
+echo "DCOM"
 
-#!/bin/bash
 if [[ -e "$loglist" ]]; then
     echo "Found existing log list of jobs using DCOM (${loglist})."
-    echo "(Move existing log list to generate a new one...)"
     echo "Using existing log list...Move existing log list to generate a new one."
 else
     echo "No existing log list found. Querying output logs for DCOM references."
-    grep -rl '\/lfs\/h1\/ops\/prod\/dcom\/.* ' /lfs/h1/ops/para/output/${pdy}/${model}_* > $loglist
+    grep -rl '\/lfs\/h1\/ops\/prod\/dcom\/.* ' /lfs/h1/ops/para/output/${pdy}/${model}_*${cyc}.o* > $loglist
+fi
+
+if [[ ! -s "$loglist" ]]; then
+    echo "no output captured, exiting"
+    rm $loglist
+    exit
 fi
 
 [[ -e "$outfile" ]] && rm -rf $outfile
@@ -32,12 +39,16 @@ fi
 [[ -e "$outfile.$cyc.cleaned" ]] && rm -rf $outfile.$cyc.cleaned
 [[ -e "$outfile.$cyc.exists" ]] && rm -rf $outfile.$cyc.exists
 
+#step 1: for each output log file, find the DCOM instances referenced:
 while read line; do
     if [[ "$line" == *"_${cyc}.o"* ]]; then
         grep -ho -e "/lfs/h1/ops/prod/dcom/.*" $line >> $outfile.$cyc
     fi
 done < $loglist
 
+# step 2:
+# requires package by package modification.
+# do some cleanup on what is captured by the step 1 grep.
 while read line; do
     if [[ "$line" == *"' ']'"* ]]; then
         echo $line | sed "s/' ']'//g" >> $outfile.$cyc.cleaned
@@ -48,8 +59,10 @@ while read line; do
     fi
 done < $outfile.$cyc
 
+# more cleanup with sort | uniq
 sort $outfile.$cyc.cleaned | uniq > $outfile.$cyc.cleaned.uniq
 
+# step 3: check for file existence
 while read line; do
     if [[ "$line" == *" "* ]]; then
         for entry in $line; do
