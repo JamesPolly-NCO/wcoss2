@@ -115,20 +115,20 @@ echo "done."
 
 # step 3: make file references unique for each job
 echo "Making references unique for each job..."
-icnt=0
+njobs=$(grep -c '^jrrfs' $outfile.cleaned)
+icnt=1
 while IFS= read -r tmpjob; do
-    if [[ $icnt -eq 0 ]]; then
-        prevjob=$tmpjob
-        ((icnt++))
-        continue
+    tmpfile=$tmpjob.tmpfile
+    if [[ $icnt -eq $njobs ]]; then
+        sed -n "/$tmpjob/,\$ {/^jrrfs/d;p}" $outfile.cleaned > $tmpfile
+    else
+        sed -n "/$tmpjob/,/^jrrfs/{/^jrrfs/!p}" $outfile.cleaned > $tmpfile
     fi
-    tmpfile=$prevjob.tmpfile
-    sed -n "/$prevjob/,/$tmpjob/{/$tmpjob/!p}" $outfile.cleaned > $tmpfile
+    echo $tmpjob >> "$outfile.uniq"
     sort $tmpfile | uniq >> "$outfile.uniq"
     rm $tmpfile
-    prevjob=$tmpjob
-    ((icnt++))
     echo -ne "Progress: $icnt / $njobs\r"
+    ((icnt++))
 done < <(grep '^jrrfs' $outfile.cleaned)
 echo "" && echo "done."
 
