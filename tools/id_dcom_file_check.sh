@@ -10,12 +10,13 @@ model=$1
 pdy=$2
 cyc=$3
 
-outfile="${model}_${pdy}_dcom_files"
+cdate="${model}_${pdy}_${cyc}"
+outfile="${cdate}_dcom_files"
 
 tmpfiles=""
 while read line; do
     tmpfiles+="$line "
-done < "${outfile}.${cyc}.exists"
+done < "${outfile}.exists"
 
 du -sch $tmpfiles
 

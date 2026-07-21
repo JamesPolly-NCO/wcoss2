@@ -35,14 +35,13 @@ if [[ ! -s "$loglist" ]]; then
 fi
 
 [[ -e "$outfile" ]] && rm -rf $outfile
-[[ -e "$outfile.$cyc" ]] && rm -rf $outfile.$cyc
-[[ -e "$outfile.$cyc.cleaned" ]] && rm -rf $outfile.$cyc.cleaned
-[[ -e "$outfile.$cyc.exists" ]] && rm -rf $outfile.$cyc.exists
+[[ -e "$outfile.cleaned" ]] && rm -rf $outfile.cleaned
+[[ -e "$outfile.exists" ]] && rm -rf $outfile.exists
 
 #step 1: for each output log file, find the DCOM instances referenced:
 while read line; do
     if [[ "$line" == *"_${cyc}.o"* ]]; then
-        grep -ho -e "/lfs/h1/ops/prod/dcom/.*" $line >> $outfile.$cyc
+        grep -ho -e "/lfs/h1/ops/prod/dcom/.*" $line >> $outfile
     fi
 done < $loglist
 
@@ -51,16 +50,16 @@ done < $loglist
 # do some cleanup on what is captured by the step 1 grep.
 while read line; do
     if [[ "$line" == *"' ']'"* ]]; then
-        echo $line | sed "s/' ']'//g" >> $outfile.$cyc.cleaned
+        echo $line | sed "s/' ']'//g" >> $outfile.cleaned
     elif [[ "$line" == *"]"* ]]; then
-        echo $line | sed "s/]//g" >> $outfile.$cyc.cleaned
+        echo $line | sed "s/]//g" >> $outfile.cleaned
     else
-        echo $line | sed "s/'//g" >> $outfile.$cyc.cleaned
+        echo $line | sed "s/'//g" >> $outfile.cleaned
     fi
-done < $outfile.$cyc
+done < $outfile
 
 # more cleanup with sort | uniq
-sort $outfile.$cyc.cleaned | uniq > $outfile.$cyc.cleaned.uniq
+sort $outfile.cleaned | uniq > $outfile.cleaned.uniq
 
 # step 3: check for file existence
 while read line; do
@@ -68,11 +67,11 @@ while read line; do
         for entry in $line; do
             [[ -d "$entry" ]] && continue
             stat $entry >/dev/null 2>&1
-            [[ $? -eq -0 ]] && echo $entry >> $outfile.$cyc.exists
+            [[ $? -eq -0 ]] && echo $entry >> $outfile.exists
         done
     else
         [[ -d "$line" ]] && continue
         stat $line >/dev/null 2>&1
-        [[ $? -eq -0 ]] && echo $line >> $outfile.$cyc.exists
+        [[ $? -eq -0 ]] && echo $line >> $outfile.exists
     fi
-done < $outfile.$cyc.cleaned.uniq
+done < $outfile.cleaned.uniq
