@@ -21,6 +21,17 @@ case "$1" in
         module load netcdf
         module load nccmp
         ;;
+    debufr)
+        run_cmd="debufr -b"
+        module load PrgEnv-intel
+        module load bufr
+        ;;
+    gempak)
+        run_cmd="diff_strings"
+        diff_strings() {
+            diff <(strings $1) <(strings $2)
+        }
+        ;;
     *)
         echo "Provided command, $1, not recognized."
         exit
@@ -48,14 +59,27 @@ while IFS= read -r line; do
     if [[ -n $3 && $firstfile != $pattern ]]; then
        continue
     else
+        [[ $firstfile == *"dbnlog"* ]] && continue
         donecnt=$(( $(grep -c ${firstfile}$ $donefile) + $(grep -c ${secondfile}$ $donefile)))
         if [[ $donecnt -gt 0 ]]; then
             echo "Already processed $firstfile ($donecnt found)"
             continue
         fi
         echo $firstfile
-        $run_cmd $firstfile $secondfile >> $outfile 2>&1
-        [[ $? == 1 ]] && [[ "$run_cmd" == "nccmp"* ]] && echo $firstfile $secondfile >> $outfile
+        if [[ "$run_cmd" == "debufr"* ]]; then
+            firstdebufrout=$(basename $firstfile).out
+            $run_cmd $firstfile -o $firstdebufrout
+            seconddebufrout=$(basename $secondfile).out.hold
+            $run_cmd $secondfile -o $seconddebufrout
+            diff $firstdebufrout $seconddebufrout >> $outfile 2>&1
+            [[ $? == 1 ]] && echo $firstfile $secondfile >> $outfile
+            rm $firstdebufrout $seconddebufrout
+        elif [[ "$run_cmd" == "diff_strings" ]]; then
+            $run_cmd $firstfile $secondfile >> $outfile 2>&1
+        else
+            $run_cmd $firstfile $secondfile >> $outfile 2>&1
+            [[ $? == 1 ]] && [[ "$run_cmd" == "nccmp"* ]] && echo $firstfile $secondfile >> $outfile
+        fi
         echo $firstfile >> $donefile
     fi
 done < $infile
